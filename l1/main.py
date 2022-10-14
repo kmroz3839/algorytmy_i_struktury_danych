@@ -54,7 +54,7 @@ def z9(a: int):
 print(z9(6))
 
 def z10(arg: str):
-    for x in range(0, int(len(arg)/2)):
+    for x in range(0, len(arg)//2):
         if arg[x] != arg[len(arg)-1-x]:
             return False
     return True
