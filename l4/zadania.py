@@ -31,8 +31,26 @@ class TreeNode:
             for y in nqe.children:
                 nq.enqueue(y)
     
-    #def search(value: Any) -> Union['TreeNode', None]:
-        #nie rozumiem
+    def search_helper(self, a: 'TreeNode', value: Any, res: List['TreeNode']):
+        if a.value == value:
+            res[0] = a
+            return
+        else:
+            for x in a.children:
+                self.search_helper(x, value, res)
+                if res[0] is not None:
+                    return
+
+
+    def search(self, value: Any) -> Union['TreeNode', None]:
+        if self.value == value:
+            return self
+        res = [None]
+        for x in self.children:
+            self.search_helper(x, value, res)
+            if res[0] is not None:
+                return res[0]
+        return None
     
     def __str__(self):
         return str(self.value)
@@ -43,9 +61,13 @@ class Tree:
     def __init__(self, v: Any):
         self.root = TreeNode(v)
 
-    #def add(self, value: Any, parent_name: Any) -> None:
-        #w parametrze parent_value?
-    
+    def add(self, value: Any, parent_name: Any) -> None:
+        s: 'TreeNode' = self.root.search(parent_name)
+        if s is None:
+            raise ValueError("Nie znaleziono")
+        else:
+            s.add(TreeNode(value))
+
     def for_each_level_order(self, visit: Callable[['TreeNode'], None]) -> None:
         self.root.for_each_level_order(visit)
     
@@ -55,22 +77,27 @@ class Tree:
     #def show(self)
 
 
-def vst_level(a: TreeNode):
+def vst_print(a: TreeNode):
     print(a)
 
 def test_drzewo():
     a = Tree('F')
-    a.root.add(TreeNode('B'))
-    a.root.children[0].add(TreeNode('A'))
-    a.root.children[0].add(TreeNode('D'))
-    a.root.children[0].children[1].add(TreeNode('C'))
-    a.root.children[0].children[1].add(TreeNode('E'))
-    a.root.add(TreeNode('G'))
-    a.root.children[1].add(TreeNode('I'))
-    a.root.children[1].children[0].add(TreeNode('H'))
+    a.add('B', 'F')
+    a.add('A', 'B')
+    a.add('D', 'B')
+    a.add('C', 'D')
+    a.add('E', 'D')
+    a.add('G', 'F')
+    a.add('I', 'G')
+    
     print("Level order:")
-    a.root.for_each_level_order(vst_level)
+    a.root.for_each_level_order(vst_print)
     print("Deep first:")
-    a.root.for_each_deep_first(vst_level)
+    a.root.for_each_deep_first(vst_print)
+
+    print("\nod B:")
+    a.root.search('B').for_each_deep_first(vst_print)
+    print("od G:")
+    a.root.search('G').for_each_deep_first(vst_print)
 
 test_drzewo()
