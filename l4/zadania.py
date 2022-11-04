@@ -40,11 +40,11 @@ class TreeNode:
 class Tree:
     root: TreeNode
 
-    def __init__(self):
-        root = TreeNode()
+    def __init__(self, v: Any):
+        self.root = TreeNode(v)
 
     #def add(self, value: Any, parent_name: Any) -> None:
-        #w parametrze parent value?
+        #w parametrze parent_value?
     
     def for_each_level_order(self, visit: Callable[['TreeNode'], None]) -> None:
         self.root.for_each_level_order(visit)
@@ -55,14 +55,22 @@ class Tree:
     #def show(self)
 
 
+def vst_level(a: TreeNode):
+    print(a)
+
 def test_drzewo():
-    a = Tree()
-    a.root.add(TreeNode('F'))
-    a.root.children[0].add('B')
-    a.root.children[0][0].add('A')
-    a.root.children[0][0].add('D')
-    a.root.children[0][0][1].add('C')
-    a.root.children[0][0][1].add('E')
-    a.root.children[0].add('G')
-    a.root.children[0][1].add('I')
-    a.root.children[0][1][0].add('H')
+    a = Tree('F')
+    a.root.add(TreeNode('B'))
+    a.root.children[0].add(TreeNode('A'))
+    a.root.children[0].add(TreeNode('D'))
+    a.root.children[0].children[1].add(TreeNode('C'))
+    a.root.children[0].children[1].add(TreeNode('E'))
+    a.root.add(TreeNode('G'))
+    a.root.children[1].add(TreeNode('I'))
+    a.root.children[1].children[0].add(TreeNode('H'))
+    print("Level order:")
+    a.root.for_each_level_order(vst_level)
+    print("Deep first:")
+    a.root.for_each_deep_first(vst_level)
+
+test_drzewo()
