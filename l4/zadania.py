@@ -1,5 +1,6 @@
 from typing import Any, Callable, List, Union
 from dane import Queue
+from treeviz.treeviz import Node
 
 class TreeNode:
     value: Any
@@ -52,6 +53,12 @@ class TreeNode:
                 return res[0]
         return None
     
+    def to_treeviz_node(self) -> Node:
+        rt = Node(self.value)
+        for x in self.children:
+            rt.add_child(x.to_treeviz_node())
+        return rt
+
     def __str__(self):
         return str(self.value)
 
@@ -74,7 +81,11 @@ class Tree:
     def for_each_deep_visit(self, visit: Callable[['TreeNode'], None]) -> None:
         self.root.for_each_deep_first(visit)
     
-    #def show(self)
+    def to_treeviz_tree(self) -> Node:
+        return self.root.to_treeviz_node()
+
+    def show(self):
+        self.to_treeviz_tree().visualize()
 
 
 def vst_print(a: TreeNode):
@@ -89,6 +100,7 @@ def test_drzewo():
     a.add('E', 'D')
     a.add('G', 'F')
     a.add('I', 'G')
+    a.add('H', 'I')
     
     print("Level order:")
     a.root.for_each_level_order(vst_print)
@@ -99,5 +111,7 @@ def test_drzewo():
     a.root.search('B').for_each_deep_first(vst_print)
     print("od G:")
     a.root.search('G').for_each_deep_first(vst_print)
+
+    a.show()
 
 test_drzewo()
