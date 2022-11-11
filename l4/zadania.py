@@ -1,6 +1,8 @@
 from typing import Any, Callable, List, Union
 from dane import Queue
 from treeviz.treeviz import Node
+import networkx as nx
+import matplotlib.pyplot as plt
 
 class TreeNode:
 
@@ -57,6 +59,11 @@ class TreeNode:
             rt.add_child(x.to_treeviz_node())
         return rt
 
+    def generate_nxtree_branches(self, g: List) -> None:
+        for x in self.children:
+            g.append([str(self.value), str(x.value)])
+            x.generate_nxtree_branches(g)
+
     def __str__(self):
         return str(self.value)
 
@@ -82,8 +89,18 @@ class Tree:
     def to_treeviz_tree(self) -> Node:
         return self.root.to_treeviz_node()
 
+    def generate_graphviz_tree(self) -> nx.Graph:
+        #ret = graphviz.Graph('Tree', engine='sfdp')
+        ret = nx.Graph()
+        a: List[Tuple[str,str]] = []
+        self.root.generate_nxtree_branches(a)
+        ret.add_edges_from(a)
+        return ret
+
     def show(self):
-        self.to_treeviz_tree().visualize()
+        nx.draw_networkx(self.generate_graphviz_tree())
+        plt.show()
+        #self.to_treeviz_tree().visualize()
 
 
 def vst_print(a: TreeNode):
