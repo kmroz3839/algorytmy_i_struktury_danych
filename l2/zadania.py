@@ -10,6 +10,10 @@ class Node:
 
 class LinkedList:
 
+    def __init__(self):
+        self.head: Node = None
+        self.tail: Node = None
+
     def push(self, value: Any) -> None:
         nnode: Node = Node(value, self.head)
         self.head = nnode
@@ -130,7 +134,6 @@ test_llist()
 
 #zadanie 2
 class Stack:
-    _storage: LinkedList = None
 
     def __init__(self):
         self._storage = LinkedList()
@@ -170,7 +173,6 @@ test_stack()
 
 #zadanie 3
 class Queue:
-    _storage: LinkedList
 
     def __init__(self):
         self._storage = LinkedList()
