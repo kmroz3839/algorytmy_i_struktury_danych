@@ -3,16 +3,12 @@ from typing import Any
 
 #zadanie 1
 class Node:
-    value: Any
-    next: 'Node'
 
     def __init__(self, value, next):
         self.value = value
         self.next = next
 
 class LinkedList:
-    head: Node = None
-    tail: Node = None
 
     def push(self, value: Any) -> None:
         nnode: Node = Node(value, self.head)

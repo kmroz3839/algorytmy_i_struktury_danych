@@ -3,8 +3,6 @@ from dane import Queue
 from treeviz.treeviz import Node
 
 class TreeNode:
-    value: Any
-    children: List['TreeNode']
 
     def __init__(self, v: Any):
         self.value = v
@@ -104,6 +102,7 @@ def test_drzewo():
     
     print("Level order:")
     a.root.for_each_level_order(vst_print)
+
     print("Deep first:")
     a.root.for_each_deep_first(vst_print)
 

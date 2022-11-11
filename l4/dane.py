@@ -2,16 +2,12 @@ from typing import Any
 
 
 class Node:
-    value: Any
-    next: 'Node'
 
     def __init__(self, value, next):
         self.value = value
         self.next = next
 
 class LinkedList:
-    head: Node = None
-    tail: Node = None
 
     def push(self, value: Any) -> None:
         nnode: Node = Node(value, self.head)
@@ -99,7 +95,6 @@ class LinkedList:
 
 #zadanie 2
 class Stack:
-    _storage: LinkedList = None
 
     def __init__(self):
         self._storage = LinkedList()
@@ -121,7 +116,6 @@ class Stack:
 
 #zadanie 3
 class Queue:
-    _storage: LinkedList
 
     def __init__(self):
         self._storage = LinkedList()
