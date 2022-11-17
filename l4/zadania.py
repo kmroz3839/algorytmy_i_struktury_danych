@@ -1,8 +1,9 @@
 from typing import Any, Callable, List, Union
-from dane import Queue
+from dane import Queue, Stack
 from treeviz.treeviz import Node
-import networkx as nx
-import matplotlib.pyplot as plt
+#import networkx as nx
+#import matplotlib.pyplot as plt
+import graphviz
 
 class TreeNode:
 
@@ -20,6 +21,11 @@ class TreeNode:
         visit(self)
         for x in self.children:
             x.for_each_deep_first(visit)
+    
+    def for_each_deep_first_reverse(self, visit: Callable[['TreeNode'], None]) -> None:
+        for x in self.children:
+            x.for_each_deep_first_reverse(visit)
+        visit(self)
         
     def for_each_level_order(self, visit: Callable[['TreeNode'], None]) -> None:
         visit(self)
@@ -31,6 +37,20 @@ class TreeNode:
             visit(nqe)
             for y in nqe.children:
                 nq.enqueue(y)
+    
+    def for_each_level_order_reverse(self, visit: Callable[['TreeNode'], None]) -> None:
+        nq = Queue()
+        visitQ = Stack()
+        for x in self.children:
+            nq.enqueue(x)
+        while len(nq) > 0:
+            nqe: TreeNode = nq.dequeue()
+            for y in nqe.children:
+                nq.enqueue(y)
+            visitQ.push(nqe)
+        while len(visitQ) > 0:
+            visit(visitQ.pop())
+        visit(self)
     
     def search_helper(self, a: 'TreeNode', value: Any, res: List['TreeNode']):
         if a.value == value:
@@ -59,6 +79,11 @@ class TreeNode:
             rt.add_child(x.to_treeviz_node())
         return rt
 
+    def generate_graphviz_edges(self, g: graphviz.Graph) -> None:
+        for x in self.children:
+            g.edge(str(self.value), str(x.value))
+            x.generate_graphviz_edges(g)
+
     def generate_nxtree_branches(self, g: List) -> None:
         for x in self.children:
             g.append([str(self.value), str(x.value)])
@@ -86,10 +111,16 @@ class Tree:
     def for_each_deep_visit(self, visit: Callable[['TreeNode'], None]) -> None:
         self.root.for_each_deep_first(visit)
     
+    def for_each_level_order_reverse(self, visit: Callable[['TreeNode'], None]) -> None:
+        self.root.for_each_level_order_reverse(visit)
+    
+    def for_each_deep_visit_reverse(self, visit: Callable[['TreeNode'], None]) -> None:
+        self.root.for_each_deep_first_reverse(visit)
+    
     def to_treeviz_tree(self) -> Node:
         return self.root.to_treeviz_node()
 
-    def generate_graphviz_tree(self) -> nx.Graph:
+    def generate_nx_tree(self) -> nx.Graph:
         #ret = graphviz.Graph('Tree', engine='sfdp')
         ret = nx.Graph()
         a: List[Tuple[str,str]] = []
@@ -97,10 +128,18 @@ class Tree:
         ret.add_edges_from(a)
         return ret
 
+    def generate_graphviz_tree(self) -> graphviz.Graph:
+        ret = graphviz.Graph('Tree')
+        self.root.generate_graphviz_edges(ret)
+        return ret
+
     def show(self):
-        nx.draw_networkx(self.generate_graphviz_tree())
-        plt.show()
+        #nx.draw_networkx(self.generate_graphviz_tree())
+        #plt.show()
+
         #self.to_treeviz_tree().visualize()
+
+        self.generate_graphviz_tree().render('Tree', view = True) 
 
 
 def vst_print(a: TreeNode):
@@ -117,11 +156,16 @@ def test_drzewo():
     a.add('I', 'G')
     a.add('H', 'I')
     
+    print("Deep first:")
+    print("Normalnie:")
+    a.root.for_each_deep_first(vst_print)
+    print("reverse:")
+    a.root.for_each_deep_first_reverse(vst_print)
+
     print("Level order:")
     a.root.for_each_level_order(vst_print)
-
-    print("Deep first:")
-    a.root.for_each_deep_first(vst_print)
+    print("reverse:")
+    a.root.for_each_level_order_reverse(vst_print)
 
     print("\nod B:")
     a.root.search('B').for_each_deep_first(vst_print)
