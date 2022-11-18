@@ -1,8 +1,8 @@
-from typing import Any, Callable, List, Union
+from typing import Any, Callable, List, Union, Tuple
 from dane import Queue, Stack
 from treeviz.treeviz import Node
-#import networkx as nx
-#import matplotlib.pyplot as plt
+import networkx as nx
+import matplotlib.pyplot as plt
 import graphviz
 
 class TreeNode:
@@ -35,9 +35,21 @@ class TreeNode:
         while len(nq) > 0:
             nqe: TreeNode = nq.dequeue()
             visit(nqe)
-            for y in nqe.children:
+            a = nqe.children
+            for y in a:
                 nq.enqueue(y)
     
+    def for_each_level_order_right(self, visit: Callable[['TreeNode'], None]) -> None:
+        visit(self)
+        nq = Queue()
+        for x in self.children[::-1]:
+            nq.enqueue(x)
+        while len(nq) > 0:
+            nqe: TreeNode = nq.dequeue()
+            visit(nqe)
+            for y in nqe.children[::-1]:
+                nq.enqueue(y)
+
     def for_each_level_order_reverse(self, visit: Callable[['TreeNode'], None]) -> None:
         nq = Queue()
         visitQ = Stack()
@@ -96,7 +108,10 @@ class Tree:
     root: TreeNode
 
     def __init__(self, v: Any):
-        self.root = TreeNode(v)
+        if isinstance(v, TreeNode):
+            self.root = v
+        else:
+            self.root = TreeNode(v)
 
     def add(self, value: Any, parent_name: Any) -> None:
         s: 'TreeNode' = self.root.search(parent_name)
@@ -157,15 +172,15 @@ def test_drzewo():
     a.add('H', 'I')
     
     print("Deep first:")
-    print("Normalnie:")
+    #print("Normalnie:")
     a.root.for_each_deep_first(vst_print)
-    print("reverse:")
-    a.root.for_each_deep_first_reverse(vst_print)
+    #print("reverse:")
+    #a.root.for_each_deep_first_reverse(vst_print)
 
     print("Level order:")
     a.root.for_each_level_order(vst_print)
-    print("reverse:")
-    a.root.for_each_level_order_reverse(vst_print)
+    #print("reverse:")
+    #a.root.for_each_level_order_reverse(vst_print)
 
     print("\nod B:")
     a.root.search('B').for_each_deep_first(vst_print)
@@ -174,4 +189,24 @@ def test_drzewo():
 
     a.show()
 
-test_drzewo()
+def test_drzewo2():
+    treenode = TreeNode(6)
+    treenode.add(TreeNode(2))
+    treenode.add(TreeNode(7))
+    treenode.children[0].add(TreeNode(1))
+    treenode.children[0].add(TreeNode(4))
+
+    tree = Tree(treenode)
+    tree.add(3, tree.root.children[1].value)
+    tree.add(5, tree.root.children[0].value)
+    tree.add(9, tree.root.search(7).value)
+    tree.add(8, tree.root.search(9).value)
+
+    tree.root.for_each_level_order(vst_print)
+    print("od lewej")
+    tree.root.for_each_level_order_right(vst_print)
+
+    tree.show()
+
+#test_drzewo()
+test_drzewo2()
