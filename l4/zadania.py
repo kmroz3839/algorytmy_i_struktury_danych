@@ -105,7 +105,7 @@ class TreeNode:
         return str(self.value)
 
 class Tree:
-    root: TreeNode
+    #root: TreeNode
 
     def __init__(self, v: Any):
         if isinstance(v, TreeNode):
